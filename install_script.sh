@@ -135,8 +135,8 @@ After=network.target
 
 [Service]
 Type=simple
-ExecStart=/root/venv/bin/python3 /root/outline_bot.py
-WorkingDirectory=/root
+ExecStart=/root/venv/bin/python3 /root/outline-bot/outline_bot.py
+WorkingDirectory=/root/outline-bot
 Restart=always
 User=root
 Group=root
