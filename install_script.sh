@@ -126,11 +126,12 @@ read ADMIN_ID
 # ذخیره‌سازی اطلاعات در فایل پیکربندی ربات
 echo -e "${GREEN}Saving configuration...${RESET}"
 echo -e "${YELLOW}در حال ذخیره‌سازی پیکربندی...${RESET}"
-echo "OUTLINE_API_URL=\"$OUTLINE_API_URL\"" > config.env
-echo "OUTLINE_API_KEY=\"$(basename $OUTLINE_API_URL)\"" >> config.env
-echo "CERT_SHA256=\"$CERT_SHA256\"" >> config.env
-echo "TELEGRAM_TOKEN=\"$TELEGRAM_TOKEN\"" >> config.env
-echo "ADMIN_ID=\"$ADMIN_ID\"" >> config.env
+CONFIG_FILE="$INSTALL_DIR/config.env"
+echo "OUTLINE_API_URL=\"$OUTLINE_API_URL\"" > "$CONFIG_FILE"
+echo "OUTLINE_API_KEY=\"$(basename $OUTLINE_API_URL)\"" >> "$CONFIG_FILE"
+echo "CERT_SHA256=\"$CERT_SHA256\"" >> "$CONFIG_FILE"
+echo "TELEGRAM_TOKEN=\"$TELEGRAM_TOKEN\"" >> "$CONFIG_FILE"
+echo "ADMIN_ID=\"$ADMIN_ID\"" >> "$CONFIG_FILE"
 
 # 7. ایجاد فایل سرویس systemd برای ربات تلگرام
 echo -e "${GREEN}Creating systemd service for Telegram Bot...${RESET}"
