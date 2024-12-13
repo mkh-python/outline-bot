@@ -161,12 +161,13 @@ sudo systemctl start telegram-bot.service
 # دانلود فایل‌های پروژه از گیت‌هاب
 echo -e "${CYAN}Downloading project files from GitHub...${RESET}"
 mkdir -p $INSTALL_DIR
-
 for file in "outline_bot.py" "delete_user.py" "users_data.json" "version.txt" "config.env"; do
     echo -e "${CYAN}Downloading $file...${RESET}"
     curl -fsSL "$GITHUB_REPO/$file" -o "$INSTALL_DIR/$file" || {
+        echo -e "${YELLOW}$file not found in GitHub, creating manually.${RESET}"
+        # ایجاد دستی فایل config.env
         if [[ "$file" == "config.env" ]]; then
-            echo -e "${YELLOW}$file not found in GitHub. Creating manually.${RESET}"
+            echo -e "${CYAN}Creating $file manually...${RESET}"
             cat << EOF > "$INSTALL_DIR/$file"
 OUTLINE_API_URL=
 OUTLINE_API_KEY=
@@ -181,17 +182,25 @@ EOF
     }
 done
 
-# اصلاح مسیر config.env و جایگزینی مقادیر
+# اصلاح فایل config.env و جایگزینی مقادیر
 CONFIG_FILE="$INSTALL_DIR/config.env"
 echo -e "${CYAN}Updating configuration file...${RESET}"
+cat << EOF > "$CONFIG_FILE"
+OUTLINE_API_URL=$OUTLINE_API_URL
+OUTLINE_API_KEY=$(basename $OUTLINE_API_URL)
+CERT_SHA256=$CERT_SHA256
+TELEGRAM_TOKEN=$TELEGRAM_TOKEN
+ADMIN_ID=$ADMIN_ID
+EOF
 
-sed -i "s|OUTLINE_API_URL=|OUTLINE_API_URL=$OUTLINE_API_URL|g" "$CONFIG_FILE"
-sed -i "s|OUTLINE_API_KEY=|OUTLINE_API_KEY=$(basename $OUTLINE_API_URL)|g" "$CONFIG_FILE"
-sed -i "s|CERT_SHA256=|CERT_SHA256=$CERT_SHA256|g" "$CONFIG_FILE"
-sed -i "s|TELEGRAM_TOKEN=|TELEGRAM_TOKEN=$TELEGRAM_TOKEN|g" "$CONFIG_FILE"
-sed -i "s|ADMIN_ID=|ADMIN_ID=$ADMIN_ID|g" "$CONFIG_FILE"
+# تأیید ایجاد موفق فایل config.env
+if [ -f "$CONFIG_FILE" ]; then
+    echo -e "${GREEN}Configuration file created and updated successfully at $CONFIG_FILE.${RESET}"
+else
+    echo -e "${RED}Failed to create the configuration file. Please check permissions.${RESET}"
+    exit 1
+fi
 
-echo -e "${GREEN}Configuration file updated successfully.${RESET}"
 
 
 # ارسال پیام خوش‌آمدگویی به کاربر از طریق تلگرام
