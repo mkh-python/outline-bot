@@ -12,6 +12,8 @@ RESET='\033[0m'  # Reset the color
 VERSION_FILE="/root/version.txt"
 LATEST_VERSION_URL="https://raw.githubusercontent.com/irannetwork/outline-bot/main/version.txt"
 CURRENT_VERSION="1.37.3"
+GITHUB_REPO="https://raw.githubusercontent.com/irannetwork/outline-bot/main"
+INSTALL_DIR="/root/outline-bot"
 
 # ذخیره نسخه فعلی
 if [ ! -f "$VERSION_FILE" ]; then
@@ -36,10 +38,11 @@ check_for_update() {
 # تابع به‌روزرسانی ربات
 update_bot() {
     echo -e "${CYAN}Updating the bot to the latest version...${RESET}"
-    cd /root
-    git clone https://github.com/irannetwork/outline-bot.git temp_repo
-    cp -r temp_repo/* /root/
-    rm -rf temp_repo
+    mkdir -p $INSTALL_DIR
+    curl -fsSL "$GITHUB_REPO/outline_bot.py" -o "$INSTALL_DIR/outline_bot.py"
+    curl -fsSL "$GITHUB_REPO/delete_user.py" -o "$INSTALL_DIR/delete_user.py"
+    curl -fsSL "$GITHUB_REPO/users_data.json" -o "$INSTALL_DIR/users_data.json"
+    curl -fsSL "$GITHUB_REPO/version.txt" -o "$INSTALL_DIR/version.txt"
     echo -e "${GREEN}Update successful! Restarting the bot...${RESET}"
     systemctl restart telegram-bot.service
 }
@@ -75,7 +78,7 @@ sudo apt update && sudo apt upgrade -y
 # 2. نصب پیش‌نیازهای سیستم
 echo -e "${GREEN}Installing required packages...${RESET}"
 echo -e "${YELLOW}در حال نصب پیش‌نیازهای سیستم...${RESET}"
-sudo apt install -y docker.io docker-compose python3-pip python3-venv jq
+sudo apt install -y docker.io docker-compose python3-pip python3-venv jq curl
 
 # 3. ایجاد محیط مجازی
 echo -e "${GREEN}Creating and activating virtual environment...${RESET}"
@@ -150,6 +153,14 @@ echo -e "${YELLOW}در حال فعال‌سازی و شروع سرویس ربا�
 sudo systemctl daemon-reload
 sudo systemctl enable telegram-bot.service
 sudo systemctl start telegram-bot.service
+
+# دانلود فایل‌های پروژه از گیت‌هاب
+echo -e "${CYAN}Downloading project files from GitHub...${RESET}"
+mkdir -p $INSTALL_DIR
+curl -fsSL "$GITHUB_REPO/outline_bot.py" -o "$INSTALL_DIR/outline_bot.py"
+curl -fsSL "$GITHUB_REPO/delete_user.py" -o "$INSTALL_DIR/delete_user.py"
+curl -fsSL "$GITHUB_REPO/users_data.json" -o "$INSTALL_DIR/users_data.json"
+curl -fsSL "$GITHUB_REPO/version.txt" -o "$INSTALL_DIR/version.txt"
 
 # ارسال پیام خوش‌آمدگویی به کاربر از طریق تلگرام
 echo -e "${CYAN}Sending welcome message to the user...${RESET}"
