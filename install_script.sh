@@ -10,9 +10,9 @@ CYAN='\033[0;36m'
 RESET='\033[0m'  # Reset the color
 
 VERSION_FILE="/root/version.txt"
-LATEST_VERSION_URL="https://raw.githubusercontent.com/irannetwork/outline-bot/main/version.txt"
+LATEST_VERSION_URL="https://raw.githubusercontent.com/mkh-python/outline-bot/main/version.txt"
 CURRENT_VERSION="1.37.3"
-GITHUB_REPO="https://raw.githubusercontent.com/irannetwork/outline-bot/main"
+GITHUB_REPO="https://raw.githubusercontent.com/mkh-python/outline-bot/main"
 INSTALL_DIR="/root/outline-bot"
 
 # ذخیره نسخه فعلی
@@ -39,10 +39,13 @@ check_for_update() {
 update_bot() {
     echo -e "${CYAN}Updating the bot to the latest version...${RESET}"
     mkdir -p $INSTALL_DIR
-    curl -fsSL "$GITHUB_REPO/outline_bot.py" -o "$INSTALL_DIR/outline_bot.py"
-    curl -fsSL "$GITHUB_REPO/delete_user.py" -o "$INSTALL_DIR/delete_user.py"
-    curl -fsSL "$GITHUB_REPO/users_data.json" -o "$INSTALL_DIR/users_data.json"
-    curl -fsSL "$GITHUB_REPO/version.txt" -o "$INSTALL_DIR/version.txt"
+    for file in "outline_bot.py" "delete_user.py" "users_data.json" "version.txt"; do
+        echo -e "${CYAN}Downloading $file...${RESET}"
+        curl -fsSL "$GITHUB_REPO/$file" -o "$INSTALL_DIR/$file" || {
+            echo -e "${RED}Failed to download $file. Please check your internet connection or repository.${RESET}"
+            exit 1
+        }
+    done
     echo -e "${GREEN}Update successful! Restarting the bot...${RESET}"
     systemctl restart telegram-bot.service
 }
@@ -157,10 +160,13 @@ sudo systemctl start telegram-bot.service
 # دانلود فایل‌های پروژه از گیت‌هاب
 echo -e "${CYAN}Downloading project files from GitHub...${RESET}"
 mkdir -p $INSTALL_DIR
-curl -fsSL "$GITHUB_REPO/outline_bot.py" -o "$INSTALL_DIR/outline_bot.py"
-curl -fsSL "$GITHUB_REPO/delete_user.py" -o "$INSTALL_DIR/delete_user.py"
-curl -fsSL "$GITHUB_REPO/users_data.json" -o "$INSTALL_DIR/users_data.json"
-curl -fsSL "$GITHUB_REPO/version.txt" -o "$INSTALL_DIR/version.txt"
+for file in "outline_bot.py" "delete_user.py" "users_data.json" "version.txt"; do
+    echo -e "${CYAN}Downloading $file...${RESET}"
+    curl -fsSL "$GITHUB_REPO/$file" -o "$INSTALL_DIR/$file" || {
+        echo -e "${RED}Failed to download $file. Please check your internet connection or repository.${RESET}"
+        exit 1
+    }
+done
 
 # ارسال پیام خوش‌آمدگویی به کاربر از طریق تلگرام
 echo -e "${CYAN}Sending welcome message to the user...${RESET}"
@@ -191,4 +197,4 @@ https://s3.amazonaws.com/outline-releases/manager/linux/stable/Outline-Manager.A
 # پیغام موفقیت
 echo -e "${CYAN}Installation successful! Your bot is now ready to run.${RESET}"
 echo -e "${CYAN}Your bot will automatically start after reboot. You can run it manually with the command: python3 outline_bot.py${RESET}"
-echo -e "${GREEN}Created by mkh. For support and error reports, contact @irannetwork_co.${RESET}
+echo -e "${GREEN}Created by mkh. For support and error reports, contact @irannetwork_co.${RESET}"
