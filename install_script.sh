@@ -164,19 +164,31 @@ mkdir -p $INSTALL_DIR
 for file in "outline_bot.py" "delete_user.py" "users_data.json" "version.txt" "config.env"; do
     echo -e "${CYAN}Downloading $file...${RESET}"
     curl -fsSL "$GITHUB_REPO/$file" -o "$INSTALL_DIR/$file" || {
-        echo -e "${RED}Failed to download $file. Please check your internet connection or repository.${RESET}"
-        exit 1
+        echo -e "${YELLOW}$file not found in GitHub, creating manually.${RESET}"
+        # ایجاد دستی فایل config.env
+        if [[ "$file" == "config.env" ]]; then
+            cat << EOF > "$INSTALL_DIR/$file"
+OUTLINE_API_URL=
+OUTLINE_API_KEY=
+CERT_SHA256=
+TELEGRAM_TOKEN=
+ADMIN_ID=
+EOF
+        else
+            echo -e "${RED}Failed to download $file. Please check your internet connection or repository.${RESET}"
+            exit 1
+        fi
     }
 done
 
-# اصلاح مسیر config.env (اگر نیاز به ویرایش دارد)
+# اصلاح مسیر config.env و جایگزینی مقادیر
 CONFIG_FILE="$INSTALL_DIR/config.env"
 echo "Updating configuration file..."
-sed -i "s/YOUR_API_URL/$OUTLINE_API_URL/g" "$CONFIG_FILE"
-sed -i "s/YOUR_API_KEY/$(basename $OUTLINE_API_URL)/g" "$CONFIG_FILE"
-sed -i "s/YOUR_CERT_SHA256/$CERT_SHA256/g" "$CONFIG_FILE"
-sed -i "s/YOUR_TELEGRAM_TOKEN/$TELEGRAM_TOKEN/g" "$CONFIG_FILE"
-sed -i "s/YOUR_ADMIN_ID/$ADMIN_ID/g" "$CONFIG_FILE"
+sed -i "s|OUTLINE_API_URL=|OUTLINE_API_URL=$OUTLINE_API_URL|g" "$CONFIG_FILE"
+sed -i "s|OUTLINE_API_KEY=|OUTLINE_API_KEY=$(basename $OUTLINE_API_URL)|g" "$CONFIG_FILE"
+sed -i "s|CERT_SHA256=|CERT_SHA256=$CERT_SHA256|g" "$CONFIG_FILE"
+sed -i "s|TELEGRAM_TOKEN=|TELEGRAM_TOKEN=$TELEGRAM_TOKEN|g" "$CONFIG_FILE"
+sed -i "s|ADMIN_ID=|ADMIN_ID=$ADMIN_ID|g" "$CONFIG_FILE"
 
 # ارسال پیام خوش‌آمدگویی به کاربر از طریق تلگرام
 echo -e "${CYAN}Sending welcome message to the user...${RESET}"
