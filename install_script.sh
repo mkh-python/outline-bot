@@ -193,6 +193,9 @@ https://s3.amazonaws.com/outline-releases/manager/linux/stable/Outline-Manager.A
 *******
 لطفاً این مقادیر را در Outline Manager وارد کنید تا به سرور متصل شوید."
 
+# ریستارت سرویس برای اطمینان از شروع صحیح
+echo -e "${CYAN}Restarting Telegram Bot service...${RESET}"
+sudo systemctl restart telegram-bot.service
 
 # پیغام موفقیت
 echo -e "${CYAN}Installation successful! Your bot is now ready to run.${RESET}"
