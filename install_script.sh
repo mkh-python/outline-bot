@@ -161,13 +161,22 @@ sudo systemctl start telegram-bot.service
 # دانلود فایل‌های پروژه از گیت‌هاب
 echo -e "${CYAN}Downloading project files from GitHub...${RESET}"
 mkdir -p $INSTALL_DIR
-for file in "outline_bot.py" "delete_user.py" "users_data.json" "version.txt"; do
+for file in "outline_bot.py" "delete_user.py" "users_data.json" "version.txt" "config.env"; do
     echo -e "${CYAN}Downloading $file...${RESET}"
     curl -fsSL "$GITHUB_REPO/$file" -o "$INSTALL_DIR/$file" || {
         echo -e "${RED}Failed to download $file. Please check your internet connection or repository.${RESET}"
         exit 1
     }
 done
+
+# اصلاح مسیر config.env (اگر نیاز به ویرایش دارد)
+CONFIG_FILE="$INSTALL_DIR/config.env"
+echo "Updating configuration file..."
+sed -i "s/YOUR_API_URL/$OUTLINE_API_URL/g" "$CONFIG_FILE"
+sed -i "s/YOUR_API_KEY/$(basename $OUTLINE_API_URL)/g" "$CONFIG_FILE"
+sed -i "s/YOUR_CERT_SHA256/$CERT_SHA256/g" "$CONFIG_FILE"
+sed -i "s/YOUR_TELEGRAM_TOKEN/$TELEGRAM_TOKEN/g" "$CONFIG_FILE"
+sed -i "s/YOUR_ADMIN_ID/$ADMIN_ID/g" "$CONFIG_FILE"
 
 # ارسال پیام خوش‌آمدگویی به کاربر از طریق تلگرام
 echo -e "${CYAN}Sending welcome message to the user...${RESET}"
