@@ -9,7 +9,7 @@ PURPLE='\033[0;35m'
 CYAN='\033[0;36m'
 RESET='\033[0m'  # Reset the color
 
-VERSION_FILE="/root/version.txt"
+VERSION_FILE="/root/outline-bot/version.txt"
 LATEST_VERSION_URL="https://raw.githubusercontent.com/mkh-python/outline-bot/main/version.txt"
 CURRENT_VERSION="1.37.3"
 GITHUB_REPO="https://raw.githubusercontent.com/mkh-python/outline-bot/main"
