@@ -191,4 +191,4 @@ https://s3.amazonaws.com/outline-releases/manager/linux/stable/Outline-Manager.A
 # پیغام موفقیت
 echo -e "${CYAN}Installation successful! Your bot is now ready to run.${RESET}"
 echo -e "${CYAN}Your bot will automatically start after reboot. You can run it manually with the command: python3 outline_bot.py${RESET}"
-echo -e "${GREEN}Created by mkh. For support and error reports, contact @irannetwork_co.${RESET}"
+echo -e "${GREEN}Created by mkh. For support and error reports, contact @irannetwork_co.${RESET}
