@@ -104,17 +104,21 @@ sudo bash -c "$(wget -qO- https://raw.githubusercontent.com/Jigsaw-Code/outline-
 
 # 6. دریافت API URL از کاربر
 echo -e "${CYAN}Please provide your API URL from Outline Server (لطفاً API URL سرور Outline خود را وارد کنید):${RESET}"
+echo -e "${CYAN}Copy and paste the following JSON from the Outline server setup:${RESET}"
+echo -e "${GREEN}{\"apiUrl\":\"https://135.181.146.198:37359/PXLJPZH4yHvWbn5D9ZNB3g\",\"certSha256\":\"B5BAAA734BEC8D06FC25D6B87112ECB5DD801EADEAA67CA877A655E53A36BFE7\"}${RESET}"
+
 read INPUT_API_URL
 
-# استخراج مقادیر از API URL
-OUTLINE_API_URL=$(echo $INPUT_API_URL | jq -r '.apiUrl')
-CERT_SHA256=$(echo $INPUT_API_URL | jq -r '.certSha256')
-
-# بررسی مقادیر
-if [[ -z "$OUTLINE_API_URL" || -z "$CERT_SHA256" ]]; then
-    echo -e "${RED}Invalid API URL provided. Please make sure it contains both 'apiUrl' and 'certSha256'.${RESET}"
+# بررسی اینکه ورودی JSON معتبر است یا نه
+if echo "$INPUT_API_URL" | jq -e . >/dev/null 2>&1; then
+    OUTLINE_API_URL=$(echo $INPUT_API_URL | jq -r '.apiUrl')
+    CERT_SHA256=$(echo $INPUT_API_URL | jq -r '.certSha256')
+else
+    echo -e "${RED}Invalid API URL provided. Please make sure it is a valid JSON with 'apiUrl' and 'certSha256'.${RESET}"
     exit 1
 fi
+
+
 
 # دریافت توکن تلگرام از کاربر
 echo -e "${CYAN}Please provide your Telegram bot Token (توکن ربات تلگرام خود را وارد کنید):${RESET}"
