@@ -82,6 +82,9 @@ sudo apt update && sudo apt upgrade -y
 echo -e "${GREEN}Installing required packages...${RESET}"
 echo -e "${YELLOW}در حال نصب پیش‌نیازهای سیستم...${RESET}"
 sudo apt install -y docker.io docker-compose python3-pip python3-venv jq curl
+sudo apt install -y iptables
+echo -e "${GREEN}Dependencies installed successfully.${RESET}"
+
 
 # 3. ایجاد محیط مجازی
 echo -e "${GREEN}Creating and activating virtual environment...${RESET}"
@@ -162,6 +165,14 @@ sudo systemctl start telegram-bot.service
 echo -e "${CYAN}Downloading project files from GitHub...${RESET}"
 mkdir -p $INSTALL_DIR
 for file in "outline_bot.py" "delete_user.py" "users_data.json" "version.txt" "config.env"; do
+    # جایگزینی کد زیر در حلقه for
+    if [ ! -f "$INSTALL_DIR/$file" ]; then
+        echo -e "${CYAN}Downloading $file...${RESET}"
+        curl -fsSL "$GITHUB_REPO/$file" -o "$INSTALL_DIR/$file" || {
+            echo -e "${RED}Failed to download $file. Please check your internet connection.${RESET}"
+            exit 1
+        }
+    else
     echo -e "${CYAN}Downloading $file...${RESET}"
     curl -fsSL "$GITHUB_REPO/$file" -o "$INSTALL_DIR/$file" || {
         echo -e "${YELLOW}$file not found in GitHub, creating manually.${RESET}"
@@ -181,6 +192,21 @@ EOF
         fi
     }
 done
+
+# ایجاد فایل‌های JSON مورد نیاز
+echo -e "${GREEN}Ensuring required JSON files exist...${RESET}"
+for file in "blacklist.json" "monitoring_list.json" "blocked_ips.json"; do
+    if [ ! -f "$INSTALL_DIR/$file" ]; then
+        echo "{}" > "$INSTALL_DIR/$file"
+        echo -e "${CYAN}Created $file with initial content.${RESET}"
+    else
+        echo -e "${YELLOW}$file already exists. Skipping creation.${RESET}"
+    fi
+done
+echo -e "${GREEN}JSON files created successfully.${RESET}"
+
+
+
 
 # اصلاح فایل config.env و جایگزینی مقادیر
 CONFIG_FILE="$INSTALL_DIR/config.env"
